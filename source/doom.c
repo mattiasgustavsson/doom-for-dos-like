@@ -8,7 +8,6 @@
 #pragma warning( disable: 4133 )
 #pragma warning( disable: 4142 )
 
-#define alloca _alloca 
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 
@@ -18,6 +17,8 @@
 
 #define open doom_open
 #define close doom_close
+//#define vldoor_e #error door
+#include "doom/unistd.h"
 #include "doom/am_map.c"
 #include "doom/doomdef.c"
 #include "doom/doomstat.c"
@@ -95,18 +96,5 @@
 #define strupr xstrupr
 #include "doom/w_wad.c"
 #undef strupr
-
-#undef MAXCHAR
-#undef MAXSHORT
-#undef MAXINT
-#undef MAXLONG
-#undef MINCHAR
-#undef MINSHORT
-#undef MININT
-#undef MINLONG
-#pragma comment( lib, "Ws2_32.lib" )
-#define boolean win32_boolean
-#include <winsock2.h>
-#undef boolean
 
 #include "doom/i_net.c"

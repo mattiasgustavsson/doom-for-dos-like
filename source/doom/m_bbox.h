@@ -23,12 +23,7 @@
 #ifndef __M_BBOX__
 #define __M_BBOX__
 
-#ifndef _WIN32
-#include <values.h>
-#else
 #include "doomtype.h"
-#endif
-
 #include "m_fixed.h"
 
 

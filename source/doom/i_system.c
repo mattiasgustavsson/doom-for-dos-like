@@ -24,6 +24,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_ticcmd.h"
+#include <time.h>
+#include <stdarg.h>
 
 
 void I_Init (void)

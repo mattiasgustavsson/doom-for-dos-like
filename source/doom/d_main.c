@@ -40,10 +40,6 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 #include <fcntl.h>
 #endif
 
-#ifdef _WIN32
-#include "unistd.h"
-#endif
-
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -880,7 +876,7 @@ void D_DoomMain (void)
     if (M_CheckParm("-cdrom"))
     {
 	printf(D_CDROM);
-	mkdir("c:\\doomdata",0);
+	mkdir("c:\\doomdata");
 	strcpy (basedefault,"c:/doomdata/default.cfg");
     }	
     
