@@ -1,3 +1,8 @@
+#include "dos.h"
+
+int dosprint( const char* format, ... );
+
+
 #pragma warning( disable: 4113 )
 #pragma warning( disable: 4311 )
 #pragma warning( disable: 4047 )
@@ -15,9 +20,15 @@
 #define CONCAT( x, y ) CONCAT_IMPL( x, y )
 #define rcsid CONCAT( rcsid, __COUNTER__ )
 
+#include <stdio.h>
+
+#define printf(x, ...) dosprint( x, ##__VA_ARGS__)
+#define fprintf(y,x, ...) dosprint( x,##__VA_ARGS__)
+
+#define mousex doom_mousex
+#define mousey doom_mousey
 #define open doom_open
 #define close doom_close
-//#define vldoor_e #error door
 #include "doom/unistd.h"
 #include "doom/am_map.c"
 #include "doom/doomdef.c"
@@ -89,6 +100,8 @@
 
 #undef open
 #undef close
+#undef mousex
+#undef mousey
 
 #include <io.h>
 #include "doom/m_menu.c"
@@ -98,3 +111,59 @@
 #undef strupr
 
 #include "doom/i_net.c"
+
+#undef printf
+#undef fprintf
+
+char* textline = NULL;
+size_t textline_capacity = 0;
+unsigned int attribute = 0x70;
+
+int dosprint( const char* format, ... ) {
+    if( !textline ) {
+        textline_capacity = 256;
+	    textline = (char*) malloc( textline_capacity );
+        for( int i = 0; i < 30; ++i ) waitvbl();
+    }
+
+    va_list args;
+	va_start( args, format );
+	size_t len = vsnprintf( textline, textline_capacity - 1, format, args );
+	while( len < 0 || len >= textline_capacity ) {
+		textline_capacity *= 2;
+		textline = (char*) realloc( textline, textline_capacity );
+		len = vsnprintf( textline, textline_capacity - 1, format, args );
+	}
+	
+	const char* str = textline;
+	while( *str ) {
+		if( wherex() >= screenwidth() || *str == '\n' )  { 
+            waitvbl();
+			gotoxy( 0, wherey() +  1 ); 
+		}
+		while( wherey() >= screenheight() ) {
+			memmove( ((unsigned short*)screenbuffer()), ((unsigned short*)screenbuffer()) + screenwidth(), screenwidth() * ( screenheight() - 1 ) * sizeof( unsigned short ) );
+			memset( ((unsigned short*)screenbuffer()) + screenwidth() * ( screenheight() - 1 ), 0, screenwidth() * sizeof( unsigned short ) );
+			gotoxy( wherex(), wherey() - 1 );
+		}
+		if( (unsigned) *str >= ' ' ) {
+			((unsigned short*)screenbuffer())[ wherex() + screenwidth() * wherey() ] = ( ( attribute & 0xf0 ) << 4 ) | ( ( attribute & 0x0f ) << 12 ) | (unsigned char) *str;
+            gotoxy( wherex() + 1, wherey() );
+		} else if( *str == '\x8' ) { // Backspace
+			int x = wherex();
+			--x;
+			gotoxy( x < 0 ? 0 : x, wherey() );
+		}
+		++str;
+	}
+	if( wherex() >= screenwidth() || *str == '\n' ) { 
+        gotoxy( 0, wherey() + 1 );
+	}
+	while( wherey() >= screenheight() ) {
+		memmove( ((unsigned short*)screenbuffer()), ((unsigned short*)screenbuffer()) + screenwidth(), screenwidth() * ( screenheight() - 1 ) * sizeof( unsigned short ) );
+		memset( ((unsigned short*)screenbuffer()) + screenwidth() * ( screenheight() - 1 ), 0, screenwidth() * sizeof( unsigned short ) );
+        gotoxy( 0, wherey() - 1 );
+	}
+	return len;
+}
+
