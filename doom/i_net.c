@@ -249,9 +249,6 @@ int GetLocalAddress (void)
 //
 void I_InitNetwork (void)
 {
-#ifdef _WIN32
-
-#else
     boolean		trueval = true;
     int			i;
     int			p;
@@ -335,10 +332,9 @@ void I_InitNetwork (void)
     // build message to receive
     insocket = UDPsocket ();
     BindToLocalPort (insocket,htons(DOOMPORT));
-    ioctl (insocket, FIONBIO, &trueval);
+    ioctlsocket (insocket, FIONBIO, &trueval);
 
     sendsocket = UDPsocket ();
-#endif
 }
 
 
