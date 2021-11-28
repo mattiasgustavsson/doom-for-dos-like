@@ -120,10 +120,11 @@ size_t textline_capacity = 0;
 unsigned int attribute = 0x70;
 
 int dosprint( const char* format, ... ) {
+    if( screenwidth() != 80 ) return 0;
     if( !textline ) {
         textline_capacity = 256;
 	    textline = (char*) malloc( textline_capacity );
-        for( int i = 0; i < 30; ++i ) waitvbl();
+        for( int i = 0; i < 50; ++i ) waitvbl();
     }
 
     va_list args;
@@ -157,6 +158,7 @@ int dosprint( const char* format, ... ) {
 		++str;
 	}
 	if( wherex() >= screenwidth() || *str == '\n' ) { 
+        waitvbl();
         gotoxy( 0, wherey() + 1 );
 	}
 	while( wherey() >= screenheight() ) {
