@@ -188,10 +188,10 @@ I_InitSound()
 
 //
 // MUSIC API.
-// Still no music done.
-// Remains. Dummies.
-//
-void I_InitMusic(void)		{ }
+
+static struct music_t* musics[ 16 ];
+
+void I_InitMusic(void)		{ noteon(0,0,0); /*preload soundbank*/}
 void I_ShutdownMusic(void)	{ }
 
 static int	looping=0;
@@ -199,42 +199,49 @@ static int	musicdies=-1;
 
 void I_PlaySong(int handle, int looping)
 {
-  // UNUSED.
-  handle = looping = 0;
-  musicdies = gametic + TICRATE*30;
+    if( handle >= 0 && handle < sizeof( musics ) / sizeof( *musics ) ) {
+        if( musics[ handle ] ) {
+            playmusic( musics[ handle ], looping, 255 );
+        }
+    }
 }
 
 void I_PauseSong (int handle)
 {
-  // UNUSED.
-  handle = 0;
-}
+}  
 
 void I_ResumeSong (int handle)
 {
-  // UNUSED.
-  handle = 0;
 }
 
 void I_StopSong(int handle)
 {
-  // UNUSED.
-  handle = 0;
-  
-  looping = 0;
-  musicdies = 0;
+    stopmusic();
 }
 
 void I_UnRegisterSong(int handle)
-{
-  // UNUSED.
-  handle = 0;
+{   
+    stopmusic();
+    waitvbl();
+    if( handle >= 0 && handle < sizeof( musics ) / sizeof( *musics ) ) {
+        if( musics[ handle ] ) free( musics[ handle ] );
+        musics[ handle ] = NULL;
+    }
 }
-
-static struct music_t* musics[ 16 ];
 
 int I_RegisterSong(void* data)
 {
+    int slot = -1;
+    for( int i = 0; i < sizeof( musics ) / sizeof( *musics ); ++i ) {
+        if( musics[ i ] == NULL ) {
+            slot = i; 
+            break;
+        }
+    }
+    if( slot == -1 ) {
+        return -1;
+    }
+
     uintptr_t ptr = (uintptr_t) data;
     unsigned int sig = *(unsigned int*) ptr;
     ptr += 4;
@@ -242,14 +249,15 @@ int I_RegisterSong(void* data)
         return -1;
     }
     int length = *(unsigned short*) ptr;
-    
-    struct music_t* mus = createmus( data, length );
+    ptr += 2;    
+    int offset = *(unsigned short*) ptr;
+
+    struct music_t* mus = createmus( data, length + offset );
     if( !mus ) {
         return -1;
     }
-    int slot = -1;
- 
-    return 1;
+    musics[ slot ] = mus;
+    return slot;
 }
 
 // Is the song playing?

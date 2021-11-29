@@ -110,6 +110,7 @@ struct music_t* loadmid( char const* filename );
 struct music_t* loadmus( char const* filename );
 struct music_t* loadmod( char const* filename );
 struct music_t* loadopb( char const* filename );
+struct music_t* createmus( void* data, int size );
 void playmusic( struct music_t* music, int loop, int volume );
 void stopmusic( void );
 int musicplaying( void );
@@ -1844,6 +1845,17 @@ struct music_t* loadmus( char const* filename ) {
     music->format = MUSIC_FORMAT_MUS;
     return music;
 }
+
+
+struct music_t* createmus( void* data, int size ) {
+    load_default_sf2();
+    mus_t* mus = mus_create( data, size, NULL );
+    if( !mus ) return NULL;
+    struct music_t* music = ( (struct music_t*)mus ) - 1;
+    music->format = MUSIC_FORMAT_MUS;
+    return music;
+}
+
 
 
 struct music_t* loadmod( char const* filename ) {
