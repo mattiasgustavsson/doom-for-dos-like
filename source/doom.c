@@ -1,7 +1,16 @@
 #include "dos.h"
 
+#include <stdarg.h>
 int dosprint( const char* format, ... );
+int dosprintv( const char* format, va_list args );
 
+#ifdef __wasm__
+#pragma clang diagnostic ignored "-Wunsequenced"
+#pragma clang diagnostic ignored "-Wimplicit-int"
+#pragma clang diagnostic ignored "-Wpointer-sign"
+#pragma clang diagnostic ignored "-Wlogical-not-parentheses"
+#pragma clang diagnostic ignored "-Wabsolute-value"
+#endif
 
 #pragma warning( disable: 4113 )
 #pragma warning( disable: 4311 )
@@ -13,8 +22,14 @@ int dosprint( const char* format, ... );
 #pragma warning( disable: 4133 )
 #pragma warning( disable: 4142 )
 
+#ifdef _WIN32
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
+#else
+#include <strings.h>
+#include <unistd.h>
+#include <stdlib.h>
+#endif
 
 #define CONCAT_IMPL( x, y ) x##y
 #define CONCAT( x, y ) CONCAT_IMPL( x, y )
@@ -24,11 +39,21 @@ int dosprint( const char* format, ... );
 
 #define printf(x, ...) dosprint( x, ##__VA_ARGS__)
 #define fprintf(y,x, ...) dosprint( x,##__VA_ARGS__)
+#define vfprintf(y,x,a) dosprintv( x,a)
+int doom_access( char const* _FileName, int _AccessMode ) {
+    FILE* f = fopen( _FileName, "rb" );
+    if( f ) {
+        fclose(f);
+        return 0;
+    }
+    return 1;
+}
 
 #define mousex doom_mousex
 #define mousey doom_mousey
 #define open doom_open
 #define close doom_close
+#define access doom_access
 #include "doom/unistd.h"
 #include "doom/am_map.c"
 #include "doom/doomdef.c"
@@ -103,7 +128,6 @@ int dosprint( const char* format, ... );
 #undef mousex
 #undef mousey
 
-#include <io.h>
 #include "doom/m_menu.c"
 #include "doom/m_misc.c"
 #define strupr xstrupr
@@ -114,6 +138,8 @@ int dosprint( const char* format, ... );
 
 #undef printf
 #undef fprintf
+#undef vfprintf
+#undef doom_access
 
 char* textline = NULL;
 size_t textline_capacity = 0;
@@ -121,14 +147,22 @@ unsigned int attribute = 0x70;
 
 int dosprint( const char* format, ... ) {
     if( screenwidth() != 80 ) return 0;
+    va_list args;
+	va_start( args, format );
+    int res = dosprintv( format, args );
+    va_end(args);
+    return res;
+	}
+	
+
+int dosprintv( const char* format, va_list args ) {
+    if( screenwidth() != 80 ) return 0;
     if( !textline ) {
         textline_capacity = 256;
 	    textline = (char*) malloc( textline_capacity );
         for( int i = 0; i < 50; ++i ) waitvbl();
     }
 
-    va_list args;
-	va_start( args, format );
 	size_t len = vsnprintf( textline, textline_capacity - 1, format, args );
 	while( len < 0 || len >= textline_capacity ) {
 		textline_capacity *= 2;

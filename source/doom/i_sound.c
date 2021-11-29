@@ -231,12 +231,25 @@ void I_UnRegisterSong(int handle)
   handle = 0;
 }
 
+static struct music_t* musics[ 16 ];
+
 int I_RegisterSong(void* data)
 {
-  // UNUSED.
-  data = NULL;
-  
-  return 1;
+    uintptr_t ptr = (uintptr_t) data;
+    unsigned int sig = *(unsigned int*) ptr;
+    ptr += 4;
+    if( sig != 0x1a53554d ) { // Identifier "MUS" followed by 0x1A
+        return -1;
+    }
+    int length = *(unsigned short*) ptr;
+    
+    struct music_t* mus = createmus( data, length );
+    if( !mus ) {
+        return -1;
+    }
+    int slot = -1;
+ 
+    return 1;
 }
 
 // Is the song playing?
