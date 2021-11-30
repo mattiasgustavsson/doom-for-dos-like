@@ -12,6 +12,20 @@ jobs:
       - name: build doom
         run: |
           cl source/doom.c source/dos.c
+  build-windows-tcc:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v1
+      - uses: robinraju/release-downloader@v1.2
+        with:
+          repository: "mattiasgustavsson/tcc-build"
+          tag: "tcc64"
+          fileName: "tcc-0.9.27-win64-bin.zip.zip"
+      - name: install dependencies
+        run: 7z x tcc-0.9.27-win64-bin.zip.zip
+      - name: build doom
+        run: |
+          tcc/tcc source/doom.c source/dos.c
   build-macos:
     runs-on: macOS-latest
     steps:
