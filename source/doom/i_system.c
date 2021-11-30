@@ -152,6 +152,15 @@ void I_StartTic (void)
         prev[ i ] = keys[ i ];
 	}
 
+    int relx = mouserelx();
+    int rely = mouserely();
+
+    event_t ev;
+	ev.type = ev_mouse;
+    ev.data1 = 0;
+	ev.data2 = relx << 2;
+	ev.data3 = -rely << 2;
+    D_PostEvent( &ev );
 }
 
 // Asynchronous interrupt functions should maintain private queues

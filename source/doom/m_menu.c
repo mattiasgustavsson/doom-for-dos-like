@@ -1397,7 +1397,7 @@ boolean M_Responder (event_t* ev)
     {
 	if (ev->type == ev_mouse && mousewait < I_GetTime())
 	{
-	    mousey += ev->data3;
+	    //mousey += ev->data3;
 	    if (mousey < lasty-30)
 	    {
 		ch = KEY_DOWNARROW;
@@ -1411,7 +1411,7 @@ boolean M_Responder (event_t* ev)
 		mousey = lasty += 30;
 	    }
 		
-	    mousex += ev->data2;
+	    //mousex += ev->data2;
 	    if (mousex < lastx-30)
 	    {
 		ch = KEY_LEFTARROW;
