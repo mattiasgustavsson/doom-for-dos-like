@@ -29,6 +29,7 @@ int dosprintv( const char* format, va_list args );
 #include <strings.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdint.h>
 #endif
 
 #define CONCAT_IMPL( x, y ) x##y
