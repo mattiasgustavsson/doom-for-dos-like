@@ -54,7 +54,9 @@ int doom_access( char const* _FileName, int _AccessMode ) {
 #define open doom_open
 #define close doom_close
 #define access doom_access
+#if defined(_WIN32) || defined(__wasm__)
 #include "doom/unistd.h"
+#endif
 #include "doom/am_map.c"
 #include "doom/doomdef.c"
 #include "doom/doomstat.c"
