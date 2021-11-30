@@ -160,7 +160,7 @@ int dosprintv( const char* format, va_list args ) {
     if( !textline ) {
         textline_capacity = 256;
 	    textline = (char*) malloc( textline_capacity );
-        for( int i = 0; i < 50; ++i ) waitvbl();
+        for( int i = 0; i < 30; ++i ) waitvbl();
     }
 
 	size_t len = vsnprintf( textline, textline_capacity - 1, format, args );

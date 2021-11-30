@@ -31,6 +31,7 @@
 void I_Init (void)
 {
     I_InitSound();
+    I_InitMusic();
     I_InitGraphics();
 }
 
@@ -101,20 +102,37 @@ void I_StartTic (void)
 
         switch( i )
         {
+            case 97: key = KEY_F1; break;
+            case 98: key = KEY_F2; break;
+            case 99: key = KEY_F3; break;
+            case 100: key = KEY_F4; break;
+            case 101: key = KEY_F5; break;
+            case 102: key = KEY_F6; break;
+            case 103: key = KEY_F7; break;
+            case 104: key = KEY_F8; break;
+            case 105: key = KEY_F9; break;
+            case 106: key = KEY_F10; break;
+            case 107: key = KEY_F11; break;
+            case 108: key = KEY_F12; break;
+            case 8: key = KEY_TAB; break;
+            case KEY_OEM_MINUS: key = KEY_MINUS; break;
+            case KEY_OEM_PLUS: key = KEY_EQUALS; break;
+            case KEY_BACK: key = KEY_BACKSPACE; break;
             case KEY_UP: key = KEY_UPARROW; break;
             case KEY_DOWN: key = KEY_DOWNARROW; break;
             case KEY_LEFT: key = KEY_LEFTARROW; break;
             case KEY_RIGHT: key = KEY_RIGHTARROW; break;
-            case KEY_ESCAPE: key = KEY_ESCAPE; break;
+            case 20: key = KEY_ESCAPE; break;
             case KEY_SHIFT: key = KEY_RSHIFT; break;
             case KEY_CONTROL: key = KEY_RCTRL; break;
             case KEY_RMENU: key = KEY_RALT; break;
             case KEY_LMENU: key = KEY_LALT; break;
             case KEY_RETURN: key = KEY_ENTER; break;
-			case KEY_PAUSE: key = KEY_PAUSE; break;
+			case 14: key = KEY_PAUSE; break;
 		    case KEY_SPACE: key = ' '; break;
-            default:
-                key = tolower( i );
+        }
+        if( i >= KEY_A && i <= KEY_Z ) {
+            key = 'a' + ( i - KEY_A );
         }
 
         if( keys[ i ] && !prev[ i ] )

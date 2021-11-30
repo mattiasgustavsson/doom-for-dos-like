@@ -191,7 +191,10 @@ I_InitSound()
 
 static struct music_t* musics[ 16 ];
 
-void I_InitMusic(void)		{ noteon(0,0,0); /*preload soundbank*/}
+void I_InitMusic(void)
+{ 
+    noteon(0,0,0); /*preload soundbank*/
+}
 void I_ShutdownMusic(void)	{ }
 
 static int	looping=0;
@@ -222,6 +225,7 @@ void I_StopSong(int handle)
 void I_UnRegisterSong(int handle)
 {   
     stopmusic();
+    waitvbl();
     waitvbl();
     if( handle >= 0 && handle < sizeof( musics ) / sizeof( *musics ) ) {
         if( musics[ handle ] ) free( musics[ handle ] );
