@@ -20,9 +20,9 @@ jobs:
         with:
           repository: "mattiasgustavsson/tcc-build"
           tag: "tcc64"
-          fileName: "tcc-0.9.27-win64-bin.zip.zip"
+          fileName: "tcc-0.9.27-win64-bin.zip"
       - name: install dependencies
-        run: 7z x tcc-0.9.27-win64-bin.zip.zip
+        run: 7z x tcc-0.9.27-win64-bin.zip
       - name: build doom
         run: |
           tcc/tcc source/doom.c source/dos.c
