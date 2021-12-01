@@ -60,7 +60,7 @@ SDL2 and GLEW are required - if you don't have them installed you can do so on U
 ### WebAssembly
 
 ```
-  wasm\node wasm\wajicup.js -embed doom1.wad doom1.wad source\doom.c source\dos.c doom.html 
+  wasm\node wasm\wajicup.js -embed doom1.wad doom1.wad -template template.html source\doom.c source\dos.c doom.html
 ```
 
 A WebAssembly build environment is required. You can download it (for Windows) here: [github.com/mattiasgustavsson/dos-like/releases/tag/wasm-env](https://github.com/mattiasgustavsson/dos-like/releases/tag/wasm-env).

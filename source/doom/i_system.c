@@ -134,6 +134,9 @@ void I_StartTic (void)
         if( i >= KEY_A && i <= KEY_Z ) {
             key = 'a' + ( i - KEY_A );
         }
+        if( i >= KEY_0 && i <= KEY_9 ) {
+            key = '0' + ( i - KEY_0 );
+        }
 
         if( keys[ i ] && !prev[ i ] )
             {

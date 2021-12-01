@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en-us">
+<head><meta charset="utf-8"></head>
+<body style="background:#CCC">
+<center>Running on the <a href="https://mattiasgustavsson.itch.io/dos-like">dos-like</a> framework.</center>
+<center>Source code available on <a href="https://github.com/mattiasgustavsson/doom-for-dos-like">github</a>.</center>
+<div id="wa_log"><h2><center>Loading...</center></h2></div>
+<canvas id="wa_canvas" style="display:block;margin:0 auto;width:1088px;max-width:100%" oncontextmenu="event.preventDefault()" width="1088" height="768"></canvas>
+<script type='text/javascript'>
+var WA =
+{
+	canvas: document.getElementById('wa_canvas'),
+	print: (msg)=>console.log(msg),
+	error: function(code, msg)
+	{
+		var L = {
+			BOOT:  'Error during startup. Your browser might not support WebAssembly. Please update it to the latest version.',
+			WEBGL: 'Your browser or graphics card does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#EEE">WebGL</a>.<br>Find out how to get it <a href="http://get.webgl.org/" style="color:#EEE">here</a>.',
+			CRASH: 'dos-like crashed.',
+			MEM:   'dos-like ran out of memory.',
+			EXIT:  'Shutdown',
+		};
+		var w = WA.canvas.clientWidth, h = WA.canvas.clientHeight, p = (h/2-30), c = L[code] + (code != 'EXIT' ? '<br><br><sub>(' + msg + ')</sub>' : '');
+		WA.canvas.outerHTML = '<div style="text-align:center;background:#000;color:#888'+(h ? ';margin:0 auto;width:'+w+'px;height:'+(h-p)+'px;padding-top:'+p+'px':'')+'">'+c+'</div>';
+	},
+	started: function()
+	{
+		document.getElementById('wa_log').innerHTML='';
+	},
+};
+{{{js}}}
+</script>
+</body>
+</html>

@@ -26,13 +26,9 @@ rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 
 #include "i_sound.h"
 
-#define SAMPLECOUNT		512
-#define NUM_CHANNELS		8
-// It is 2 for 16bit, and 2 for two channels.
-#define BUFMUL                  4
+#define NUM_CHANNELS		16
 
 #define SAMPLERATE		11025	// Hz
-#define SAMPLESIZE		2   	// 16bit
 
 struct sound_t* sounds[NUMSFX];
 
@@ -104,31 +100,8 @@ getsfx
     //	     sfxname, sfxlump, size );
     //fflush( stderr );
     
-    sfx = (unsigned char*)W_CacheLumpNum( sfxlump, PU_STATIC );
-
-    // Pads the sound effect out to the mixing buffer size.
-    // The original realloc would interfere with zone memory.
-    paddedsize = ((size-8 + (SAMPLECOUNT-1)) / SAMPLECOUNT) * SAMPLECOUNT;
-
-    // Allocate from zone memory.
-    paddedsfx = (unsigned char*)Z_Malloc( paddedsize+8, PU_STATIC, 0 );
-    // ddt: (unsigned char *) realloc(sfx, paddedsize+8);
-    // This should interfere with zone memory handling,
-    //  which does not kick in in the soundserver.
-
-    // Now copy and pad.
-    memcpy(  paddedsfx, sfx, size );
-    for (i=size ; i<paddedsize+8 ; i++)
-        paddedsfx[i] = 128;
-
-    // Remove the cached lump.
-    Z_Free( sfx );
-    
-    // Preserve padded length.
-    *len = paddedsize;
-
-    // Return allocated padded data.
-    return (void *) (paddedsfx + 8);
+    *len = size;
+    return (unsigned char*)W_CacheLumpNum( sfxlump, PU_STATIC );
 }
 
 
@@ -151,6 +124,13 @@ addsfx
 
     int		rightvol;
     int		leftvol;
+
+    for (i=0; i<NUM_CHANNELS; i++)
+    {
+        if( !soundplaying(i) ) {
+            channels[i] =0;
+        }
+    }
 
     // Chainsaw troubles.
     // Play these sound effects only one at a time.
@@ -263,6 +243,7 @@ void I_InitSound(){
     for( int j = 0; j < lengths[i]; ++j ) {
         int s = ((unsigned char*)S_sfx[i].data)[ j ];
         s = ( s - 128 ) * 256;
+        if( j < 8 ) s /= (32767/(9-j));
         samples[ j ] = (short)s;
     }
     sounds[i] = createsound(1,SAMPLERATE,lengths[i],samples);
