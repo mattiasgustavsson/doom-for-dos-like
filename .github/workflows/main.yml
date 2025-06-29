@@ -34,7 +34,7 @@ jobs:
         run: brew install sdl2 glew
       - name: build doom
         run: |
-          clang source/doom.c source/dos.c `sdl2-config --libs --cflags` -lGLEW -framework OpenGL -lpthread -I$(brew --prefix glew)/include
+          clang -std=gnu89 source/doom.c source/dos.c `sdl2-config --libs --cflags` -lGLEW -framework OpenGL -lpthread -I$(brew --prefix glew)/include
   build-linux-gcc:
     runs-on: ubuntu-latest
     steps:
